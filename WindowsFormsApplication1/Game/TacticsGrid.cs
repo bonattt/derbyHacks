@@ -92,12 +92,12 @@ namespace Game
                 eu.MoveUnit(oldPoint, newPoint);
                 LookForPlayers(newPoint, eu);
             }
-            if (path.Count == 0) { eu.state.NextDestination();}
+            if (path.Count == 0) { eu.state.NextDestination(eu);}
         }
 
         private Stack<Point> GetMovementPath(Point pos, EnemyUnit eu)
         {
-            Point destination = eu.state.GetDestination();
+            Point destination = eu.state.GetDestination(eu);
             AStar asr = new AStar(pos, destination);
             return asr.FindPath();
         }
@@ -111,13 +111,22 @@ namespace Game
                 if (eu.InVisionCone(enPos, pPos) && clearLoS) 
                 {
                     eu.SpotsPlayerAt(pPos);
+                    NotifyOtherGuards(pPos, eu);
                 }
             }
         }
 
+        private void NotifyOtherGuards(Point player, EnemyUnit emu)
+        {
+            foreach (EnemyUnit e in enemyUnits)
+            {
+                if (e == emu) {continue;}
+                e.state.PlayerSpottedElseWhere(player);
+            } 
+        }
+
         private bool TurnOver()
         {
-            selected = new Point(Int32.MinValue, Int32.MinValue);
             foreach (PlayerUnit u in playerUnits)
             {
                 if (u.CanAct)
@@ -251,20 +260,19 @@ namespace Game
             PlayerUnit p = new PlayerUnit();
             entities.Add(new Point(3, 3), p);
             playerUnits.Add(p);
-            /*
-            p = new PlayerUnit();
-            entities.Add(new Point(10, 3), p);
-            playerUnits.Add(p);
 
-            p = new PlayerUnit();
-            p.CanAct = true;
-            entities.Add(new Point(15, 3), p);
-            playerUnits.Add(p);
+            Stack<Point> route = new Stack<Point>();
+            route.Push(new Point(20, 10));
+            route.Push(new Point(15, 15));
+            route.Push(new Point(10, 20));
+            EnemyUnit e1 = new EnemyUnit(new LinearPatrol(route));
+            entities.Add(new Point(15, 15), e1);
 
-            p = new PlayerUnit();
-            p.CanAct = false;
-            entities.Add(new Point(15, 15), p);
-            playerUnits.Add(p);*/
+            EnemyUnit e2 = new EnemyUnit(new Stationary(new Point(5, 5)));
+            entities.Add(new Point(5, 5), e2);
+
+            EnemyUnit e3 = new EnemyUnit(new Stationary(new Point(25, 5)));
+            entities.Add(new Point(25, 5), e3);
 
             Queue<Point> patrolRoute = new Queue<Point>();
             patrolRoute.Enqueue(new Point(5, 10));
@@ -274,6 +282,22 @@ namespace Game
             EnemyUnit e = new EnemyUnit(new CirculatrPatrol(patrolRoute));
             entities.Add(new Point(7, 3), e);
             enemyUnits.Add(e);
+
+            entities.Add(new Point(8, 7), new Wall());
+            entities.Add(new Point(9, 7), new Wall());
+            entities.Add(new Point(10, 7), new Wall());
+            entities.Add(new Point(11, 7), new Wall());
+            entities.Add(new Point(12, 7), new Wall());
+            entities.Add(new Point(13, 7), new Wall());
+            entities.Add(new Point(14, 7), new Wall());
+
+            entities.Add(new Point(10, 15), new Wall());
+            entities.Add(new Point(11, 15), new Wall());
+            entities.Add(new Point(12, 15), new Wall());
+            entities.Add(new Point(13, 15), new Wall());
+            entities.Add(new Point(14, 15), new Wall());
+            //entities.Add(new Point(15, 15), new Wall());
+            entities.Add(new Point(16, 15), new Wall());
 
             entities.Add(new Point(8, 8), new Wall());
             entities.Add(new Point(8, 9), new Wall());
@@ -292,14 +316,33 @@ namespace Game
             entities.Add(new Point(16, 14), new Wall());
 
 
-            entities.Add(new Point(20, 14), new Wall());
-            entities.Add(new Point(19, 14), new Wall());
-            entities.Add(new Point(18, 14), new Wall());
-            entities.Add(new Point(20, 16), new Wall());
-            entities.Add(new Point(19, 16), new Wall());
-            entities.Add(new Point(18, 16), new Wall());
-            entities.Add(new Point(20, 15), new Wall());
+            entities.Add(new Point(18, 17), new Wall());
             entities.Add(new Point(18, 15), new Wall());
+            entities.Add(new Point(18, 16), new Wall());
+            entities.Add(new Point(18, 14), new Wall());
+            entities.Add(new Point(19, 14), new Wall());
+            entities.Add(new Point(19, 17), new Wall());
+            entities.Add(new Point(20, 17), new Wall());
+            entities.Add(new Point(20, 15), new Wall());
+            entities.Add(new Point(20, 16), new Wall());
+            entities.Add(new Point(20, 14), new Wall());
+
+
+            entities.Add(new Point(23, 10), new Wall());
+            entities.Add(new Point(23, 11), new Wall());
+            entities.Add(new Point(23, 12), new Wall());
+            entities.Add(new Point(23, 13), new Wall());
+            entities.Add(new Point(23, 14), new Wall());
+            entities.Add(new Point(23, 15), new Wall());
+            entities.Add(new Point(23, 16), new Wall());
+
+            entities.Add(new Point(30, 2), new Wall());
+            entities.Add(new Point(30, 3), new Wall());
+            entities.Add(new Point(30, 4), new Wall());
+            entities.Add(new Point(30, 5), new Wall());
+            entities.Add(new Point(30, 6), new Wall());
+            entities.Add(new Point(30, 7), new Wall());
+            entities.Add(new Point(30, 8), new Wall());
         }
 
         private void PopulateOuterWall()

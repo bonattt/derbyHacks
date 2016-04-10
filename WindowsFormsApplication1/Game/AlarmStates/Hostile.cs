@@ -36,18 +36,34 @@ namespace Game.AlarmStates
 
         public override Point GetDestination(EnemyUnit e)
         {
+            if (ReachedDestination(e))
+            {
+                SetNewIntriguePt(e);
+            }
             lastSawPlayer -= 1;
             NextDestination(e);
             return intriguePt;
         }
 
+        private bool ReachedDestination(EnemyUnit e)
+        {
+            return intriguePt.Equals(TacticsGrid.GetInstance().GetEntityPosition(e));
+            
+        }
+
         public override void NextDestination(EnemyUnit e)
         {
-            if (lastSawPlayer > 1)
+            if (lastSawPlayer > 4)
             {
-                GuardCommunication com = GuardCommunication.GetInstance();
-                com.getNewInvestigationPoint(e);
+                SetNewIntriguePt(e);
             }
+        }
+
+        private void SetNewIntriguePt(EnemyUnit e)
+        {
+                GuardCommunication com = GuardCommunication.GetInstance();
+                intriguePt = com.getNewInvestigationPoint(e);
+                lastSawPlayer = 2;
         }
 
         public override AlarmState SpotPlayerAt(Point p)
@@ -68,7 +84,15 @@ namespace Game.AlarmStates
 
         public override void DrawAt(Graphics g, Point p) 
         {
-            Brush brush = new SolidBrush(Color.Black);
+            Brush brush;
+            if (lastSawPlayer < 3)
+            {
+                brush = new SolidBrush(Color.Black);
+            }
+            else
+            {
+                brush = new SolidBrush(Color.Crimson);
+            }
             DrawTriangle(g, p, brush);
             DrawCircle(g, p, brush);
             brush.Dispose(); 

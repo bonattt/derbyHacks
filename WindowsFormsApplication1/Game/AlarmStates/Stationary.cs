@@ -16,7 +16,7 @@ namespace Game.AlarmStates
             this.startPoint = startPoint;
         }
 
-        public override Point GetDestination()
+        public override Point GetDestination(EnemyUnit e)
         {
             return startPoint;
         }

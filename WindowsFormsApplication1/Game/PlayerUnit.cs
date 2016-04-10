@@ -14,7 +14,7 @@ namespace Game
 
         public PlayerUnit()
         {
-            this.CanAct = false;
+            this.CanAct = true;
         }
 
         public override Color GetColor()

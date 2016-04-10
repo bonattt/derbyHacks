@@ -38,9 +38,25 @@ namespace Game.AlarmStates
 
         public Point getNewInvestigationPoint(EnemyUnit e)
         {
-            Dictionary<Point, double> dict = GetRandomPoints();
-            RankDictionary(dict, TacticsGrid.GetInstance().GetEntityPosition(e));
-            return SelectBest(dict);
+           // Dictionary<Point, double> dict = GetRandomPoints();
+           // RankDictionary(dict, TacticsGrid.GetInstance().GetEntityPosition(e));
+           // return SelectBest(dict);
+            return GetCompletelyRandomPoint();
+        }
+
+        private Point GetCompletelyRandomPoint()
+        {
+            int xUpper = TacticsGrid.ConvertIntToGrid(TacticsGrid.GetInstance().Width);
+            int yUpper = TacticsGrid.ConvertIntToGrid(TacticsGrid.GetInstance().Height);
+            int xLower = 1;
+            int yLower = 1;
+            Random r = new Random();
+            
+
+                int xRand = (int)Math.Round((r.NextDouble() * (xUpper - xLower)) + xLower, 0);
+                int yRand = (int)Math.Round((r.NextDouble() * (yUpper - yLower)) + yLower, 0);
+                return new Point(xRand, yRand);
+             
         }
 
         public Dictionary<Point, double> GetRandomPoints()
@@ -51,7 +67,7 @@ namespace Game.AlarmStates
             int xLower = 1;
             int yLower = 1;
             Random r = new Random();
-            for (int k = 0; k < 10; k++)
+            for (int k = 0; k < 1; k++)
             {
                 int xRand = (int)Math.Round((r.NextDouble() * (xUpper - xLower)) + xLower, 0);
                 int yRand = (int)Math.Round((r.NextDouble() * (yUpper - yLower)) + yLower, 0);
@@ -66,19 +82,19 @@ namespace Game.AlarmStates
         {
             foreach (Point p in dict.Keys)
             {
-                RankByOtherPoints(dict, p);
-                RankByProximity(dict, p, guard)
+                //RankByOtherPoints(dict, p);
+                //RankByProximity(dict, p, guard);
             }
         }
 
         private void RankByProximity(Dictionary<Point, double> dict, Point intP, Point guardPt)
         {
             double distance = AStar.DistanceBetween(intP, guardPt);
-            dict 
+            dict[intP] += 2 * Math.Pow(distance, .33);
         }
         private void RankByOtherPoints(Dictionary<Point, double> dict, Point p1)
         {
-            Point nearest = new Point(Int32.MinValue, Int32.MinValue);
+            /*Point nearest = new Point(Int32.MinValue, Int32.MinValue);
             double bestDist = Double.MaxValue;
             foreach (Point p2 in pointsInvestigated.Keys)
             {
@@ -91,13 +107,13 @@ namespace Game.AlarmStates
             }
             double mod = 7 - dict[nearest];
             double bonus = 1; // figure this out.
-            dict[p1] += mod * bonus;
+            dict[p1] += mod * bonus;*/
         }
 
         private Point SelectBest(Dictionary<Point, double> dict)
         {
             Point best = new Point(Int32.MaxValue, Int32.MaxValue);
-            int rank = Int32.MinValue;
+            double rank = Int32.MinValue;
             foreach (Point p in dict.Keys)
             {
                 if (dict[p] > rank)
