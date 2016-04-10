@@ -44,9 +44,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="EnemyUnit.cs" />
-    <Compile Include="Entity.cs" />
-    <Compile Include="PlayerUnit.cs" />
+    <Compile Include="EnemyUnit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Entity.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="MovementPath.cs" />
+    <Compile Include="PlayerUnit.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TacticsGrid.cs">
@@ -55,8 +62,12 @@
     <Compile Include="TacticsGrid.Designer.cs">
       <DependentUpon>TacticsGrid.cs</DependentUpon>
     </Compile>
-    <Compile Include="Unit.cs" />
-    <Compile Include="Wall.cs" />
+    <Compile Include="Unit.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Include="Wall.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>

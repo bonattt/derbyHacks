@@ -12,6 +12,7 @@ namespace Game
         private readonly Color DEFAULT_FILL = Color.Black;
         private Color color;
         public Wall(Color color)
+            : base ()
         {
             ctor(color);
         }
@@ -35,6 +36,7 @@ namespace Game
             g.FillRectangle(brush, bounds);
             brush.Dispose();
         }
+
 
     }
 }

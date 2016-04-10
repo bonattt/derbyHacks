@@ -16,7 +16,7 @@ namespace Game
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new TacticsGrid(1800, 1000));
+            Application.Run(TacticsGrid.GetInstance());
         }
     }
 }
