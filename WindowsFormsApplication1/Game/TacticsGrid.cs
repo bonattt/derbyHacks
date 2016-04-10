@@ -59,7 +59,7 @@ namespace Game
             Refresh();
         }
 
-        private Point GetEntityPosition(Entity e)
+        public Point GetEntityPosition(Entity e)
         {
             foreach (Point p in entities.Keys)
             {

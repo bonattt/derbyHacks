@@ -21,12 +21,12 @@ namespace Game.AlarmStates
             useMain = true;
         }
 
-        public override Point GetDestination()
+        public override Point GetDestination(EnemyUnit e)
         {
             return Peek();
         }
 
-        public override void NextDestination()
+        public override void NextDestination(EnemyUnit e)
         {
             try
             {

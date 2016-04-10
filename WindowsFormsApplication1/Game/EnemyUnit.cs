@@ -18,9 +18,12 @@ namespace Game
         public AlarmState state;
         private int orientation;
 
+        private bool seesPlayer;
+
         public EnemyUnit(AlarmState state)
         {
             this.state = state;
+            seesPlayer = false;
             orientation = DOWN;
         }
         public override void DrawAt(Graphics g, Point p)
@@ -33,6 +36,7 @@ namespace Game
 
         public void SpotsPlayerAt(Point p)
         {
+            seesPlayer = true;
             MessageBox.Show("the enemy has spotted you!!");
             state = state.SpotPlayerAt(p);
         }

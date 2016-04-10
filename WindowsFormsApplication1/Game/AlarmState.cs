@@ -9,10 +9,12 @@ namespace Game
 {
     public abstract class AlarmState
     {
-        public abstract Point GetDestination();
-        public abstract void NextDestination();
+        public abstract Point GetDestination(EnemyUnit e);
+        public abstract void NextDestination(EnemyUnit e);
 
         public abstract AlarmState SpotPlayerAt(Point p);
+
+        public abstract AlarmState PlayerSpottedElseWhere(Point p);
 
         public abstract void DrawAt(Graphics g, Point p);
 

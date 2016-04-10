@@ -11,30 +11,60 @@ namespace Game.AlarmStates
 
     public class Hostile : AlarmState
     {
-        private Point lastSighting;
-        private 
+        private Point intriguePt;
+        private int lastSawPlayer;
 
         public Hostile(Point p)
         {
-            lastSighting = p;
+            intriguePt = p;
+            lastSawPlayer = 0;
         }
 
-        public override Point GetDestination()
+        public Hostile(Point p, bool sawPlayer)
         {
-            NextDestination();
-            return lastSighting;
+            intriguePt = p;
+            if (sawPlayer)
+            {
+                lastSawPlayer = 0;
+            }
+            else 
+            {
+                lastSawPlayer = Int32.MaxValue;
+            }
+               
         }
 
-        public override void NextDestination()
+        public override Point GetDestination(EnemyUnit e)
         {
-            
+            lastSawPlayer -= 1;
+            NextDestination(e);
+            return intriguePt;
+        }
+
+        public override void NextDestination(EnemyUnit e)
+        {
+            if (lastSawPlayer > 1)
+            {
+                GuardCommunication com = GuardCommunication.GetInstance();
+                com.getNewInvestigationPoint(e);
+            }
         }
 
         public override AlarmState SpotPlayerAt(Point p)
         {
-            lastSighting = p;
+            lastSawPlayer = 0;
+            intriguePt = p;
             return this;
         }
+
+        public override AlarmState PlayerSpottedElseWhere(Point p)
+        {
+            if (lastSawPlayer > 3)
+            {
+                intriguePt = p;
+            }
+            return this;
+        } 
 
         public override void DrawAt(Graphics g, Point p) 
         {
@@ -49,8 +79,8 @@ namespace Game.AlarmStates
             Point[] points = new Point[] {new Point(p.X + 25, p.Y + 20), new Point(p.X + 20, p.Y + 5),
                             new Point(p.X+30, p.Y+5)};
             g.FillPolygon(b, points);
-
         }
+
         private void DrawCircle(Graphics g, Point p, Brush b)
         {
             p = new Point(p.X + 25, p.Y + 25);

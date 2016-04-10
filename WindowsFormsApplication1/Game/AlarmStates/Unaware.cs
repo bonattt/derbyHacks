@@ -14,5 +14,10 @@ namespace Game.AlarmStates
             return new Hostile(p);
         }
         public override void DrawAt(Graphics g, Point p) {} // do nothing
+
+        public override AlarmState PlayerSpottedElseWhere(Point p)
+        {
+            return new Hostile(p, false);
+        }
     }
 }

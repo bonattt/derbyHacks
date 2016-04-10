@@ -21,6 +21,6 @@ namespace Game.AlarmStates
             return startPoint;
         }
 
-        public override void NextDestination() {} // do nothing
+        public override void NextDestination(EnemyUnit e) { } // do nothing
     }
 }

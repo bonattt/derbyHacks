@@ -17,11 +17,11 @@ namespace Game.AlarmStates
             this.route = route;
         }
 
-        public override Point GetDestination()
+        public override Point GetDestination(EnemyUnit e)
         {
             return route.Peek();    
         }
-        public override void NextDestination()
+        public override void NextDestination(EnemyUnit e)
         {
             Point p = route.Dequeue();
             route.Enqueue(p);
