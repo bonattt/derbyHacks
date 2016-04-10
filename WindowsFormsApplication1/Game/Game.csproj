@@ -44,6 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AlarmState.cs" />
+    <Compile Include="AlarmStates\CircularPatrol.cs" />
+    <Compile Include="AlarmStates\GuardCommunication.cs" />
+    <Compile Include="AlarmStates\Hostile.cs" />
+    <Compile Include="AlarmStates\LiniarPatrol.cs" />
+    <Compile Include="AlarmStates\Unaware.cs" />
+    <Compile Include="AlarmStates\Stationary.cs" />
+    <Compile Include="AStar.cs" />
     <Compile Include="EnemyUnit.cs">
       <SubType>Form</SubType>
     </Compile>

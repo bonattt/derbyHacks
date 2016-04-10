@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Game.AlarmStates;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
@@ -18,9 +19,7 @@ namespace Game
         private static readonly Size DEFAULT_FULL_SCREEN = new Size(1920, 1080);
 
         private static TacticsGrid instance;
-
-        public bool playing;
-
+        
         private MovementPath path;
         private Point selected;
         private Graphics g;
@@ -53,12 +52,72 @@ namespace Game
 
         private void EnemyTurn()
         {
-            MessageBox.Show("The enemy takes it's turn!!!");
+            foreach (EnemyUnit e in enemyUnits)
+            {
+                MoveEnemy(GetEntityPosition(e), e);
+            }
+            Refresh();
         }
 
+        private Point GetEntityPosition(Entity e)
+        {
+            foreach (Point p in entities.Keys)
+            {
+                if (entities[p] == e)
+                {
+                    return p;
+                }
+            }
+            throw new Exception("the Dictionary did not contain the requested entity");
+        }
+
+        private void MoveEnemy(Point enPos, EnemyUnit eu)
+        {
+            int moves = eu.GetMovementSpeed();
+            Stack<Point> path = GetMovementPath(enPos, eu);
+            Point oldPoint;
+            Point newPoint = enPos;
+            while (moves-- > 0)
+            {
+                if (path.Count == 0) { break; }
+                oldPoint = newPoint;
+                newPoint = path.Pop();
+                if (this.entities.ContainsKey(newPoint))
+                { 
+                    LookForPlayers(newPoint, eu);
+                    break;
+                }
+                entities.Remove(oldPoint);
+                entities.Add(newPoint, eu);
+                eu.MoveUnit(oldPoint, newPoint);
+                LookForPlayers(newPoint, eu);
+            }
+            if (path.Count == 0) { eu.state.NextDestination();}
+        }
+
+        private Stack<Point> GetMovementPath(Point pos, EnemyUnit eu)
+        {
+            Point destination = eu.state.GetDestination();
+            AStar asr = new AStar(pos, destination);
+            return asr.FindPath();
+        }
+        public void LookForPlayers(Point enPos, EnemyUnit eu)
+        {
+            foreach (PlayerUnit unit in playerUnits)
+            {
+                Point pPos = GetEntityPosition(unit);
+                AStar astar = new AStar(enPos, pPos);
+                bool clearLoS = astar.ClearLineOfSight();
+                if (eu.InVisionCone(enPos, pPos) && clearLoS) 
+                {
+                    eu.SpotsPlayerAt(pPos);
+                }
+            }
+        }
 
         private bool TurnOver()
         {
+            selected = new Point(Int32.MinValue, Int32.MinValue);
             foreach (PlayerUnit u in playerUnits)
             {
                 if (u.CanAct)
@@ -71,6 +130,7 @@ namespace Game
 
         private void EndPlayerTurn()
         {
+
             foreach (PlayerUnit u in playerUnits)
             {
                 u.CanAct = true;
@@ -114,6 +174,12 @@ namespace Game
             }
             path = null;
         }*/
+
+        private bool CanSee(Point p1, Point p2)
+        {
+            MovementPath path = MovementPath.FindDirectPath(p1, p2);
+            return path.IsObstructed();
+        }
 
         private void SetMovementPath()
         {
@@ -170,7 +236,7 @@ namespace Game
             }
         }
 
-        public bool CanTraversePoint(Point p)
+        public bool CanTraverse(Point p)
         {
             if (!entities.ContainsKey(p))
             {
@@ -185,7 +251,7 @@ namespace Game
             PlayerUnit p = new PlayerUnit();
             entities.Add(new Point(3, 3), p);
             playerUnits.Add(p);
-
+            /*
             p = new PlayerUnit();
             entities.Add(new Point(10, 3), p);
             playerUnits.Add(p);
@@ -195,9 +261,45 @@ namespace Game
             entities.Add(new Point(15, 3), p);
             playerUnits.Add(p);
 
-            EnemyUnit e = new EnemyUnit();
+            p = new PlayerUnit();
+            p.CanAct = false;
+            entities.Add(new Point(15, 15), p);
+            playerUnits.Add(p);*/
+
+            Queue<Point> patrolRoute = new Queue<Point>();
+            patrolRoute.Enqueue(new Point(5, 10));
+            patrolRoute.Enqueue(new Point(10, 10));
+            patrolRoute.Enqueue(new Point(7, 4));
+
+            EnemyUnit e = new EnemyUnit(new CirculatrPatrol(patrolRoute));
             entities.Add(new Point(7, 3), e);
             enemyUnits.Add(e);
+
+            entities.Add(new Point(8, 8), new Wall());
+            entities.Add(new Point(8, 9), new Wall());
+            entities.Add(new Point(8, 10), new Wall());
+            entities.Add(new Point(8, 11), new Wall());
+            entities.Add(new Point(8, 12), new Wall());
+            entities.Add(new Point(8, 13), new Wall());
+            entities.Add(new Point(8, 14), new Wall());
+
+            entities.Add(new Point(16, 8), new Wall());
+            entities.Add(new Point(16, 9), new Wall());
+            entities.Add(new Point(16, 10), new Wall());
+            entities.Add(new Point(16, 11), new Wall());
+            entities.Add(new Point(16, 12), new Wall());
+            entities.Add(new Point(16, 13), new Wall());
+            entities.Add(new Point(16, 14), new Wall());
+
+
+            entities.Add(new Point(20, 14), new Wall());
+            entities.Add(new Point(19, 14), new Wall());
+            entities.Add(new Point(18, 14), new Wall());
+            entities.Add(new Point(20, 16), new Wall());
+            entities.Add(new Point(19, 16), new Wall());
+            entities.Add(new Point(18, 16), new Wall());
+            entities.Add(new Point(20, 15), new Wall());
+            entities.Add(new Point(18, 15), new Wall());
         }
 
         private void PopulateOuterWall()

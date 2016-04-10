@@ -16,6 +16,7 @@ namespace Game
         private Point b;
         private Stack<Point> path;
         private bool complete;
+        private bool obstructed;
 
         public MovementPath(Point a, Point b)
         {
@@ -35,9 +36,13 @@ namespace Game
 
         public bool IsComplete()
         {
-            return complete;
+            return (this.b.X == path.Peek().X && this.b.Y == path.Peek().Y);
         }
-
+        public bool IsObstructed()
+        {
+            return obstructed;
+        }
+        /*
         private static MovementPath FindPath(MovementPath current, int limit)
         {
             Console.WriteLine("finding path at length: " + current.GetLength());
@@ -45,7 +50,7 @@ namespace Game
             {
                 return current;
             }
-            else if (current.PathReachesEnd())
+            else if (current.IsComplete())
             {
                 current.complete = true;
                 return current;
@@ -67,14 +72,6 @@ namespace Game
             return bestPath;
         }
 
-        private static Point[] getPointsToTry(Point last)
-        {
-            return new Point[]{new Point(last.X-1, last.Y),
-                new Point(last.X+1, last.Y),
-                new Point(last.X, last.Y-1),
-                new Point(last.X, last.Y+1)};
-        }
-
         private static void TrySingleStep(List<MovementPath> paths, MovementPath current, Point step, int limit)
         {
             if (current.path.Contains(step))
@@ -90,6 +87,33 @@ namespace Game
             {
                 paths.Add(newPath);
             }
+        }*/
+
+        private static MovementPath AStarPath() 
+        {
+
+
+            return null;
+        }
+
+        public static MovementPath FindPath(Point a, Point b)
+        {
+            return FindDirectPath(a, b);
+        }
+
+        public static MovementPath FindDirectPath(Point a, Point b)
+        {
+            MovementPath path = new MovementPath(a, b);
+            path.BuildDirectPath();
+            return path;
+        }
+
+        private static Point[] getPointsToTry(Point last)
+        {
+            return new Point[]{new Point(last.X-1, last.Y),
+                new Point(last.X+1, last.Y),
+                new Point(last.X, last.Y-1),
+                new Point(last.X, last.Y+1)};
         }
 
         public static MovementPath SelectBestPath(List<MovementPath> paths)
@@ -113,21 +137,11 @@ namespace Game
             return best;
         }
 
-        public static MovementPath FindPath(Point a, Point b)
-        {
-            return FindPath(new MovementPath(a, b), MAX_PATH_LENGTH);
-        }
-
         public int GetLength()
         {
             return path.Count;
         }
-
-        public bool PathReachesEnd()
-        {
-            return path.Peek().Equals(b);
-        }
-
+        
         private MovementPath AddPoint(Point p)
         {
             Stack<Point> newPath = CopyStack();
@@ -156,5 +170,37 @@ namespace Game
             return path;
         }
 
+        private void BuildDirectPath()
+        {
+            while (! IsComplete())
+            {
+                Point next = GetNextDirectStep();
+                path.Push(next);
+                this.obstructed = this.obstructed || TacticsGrid.GetInstance().CanTraverse(next);
+            }
+        }
+
+        public Point GetNextDirectStep()
+        {
+            Point[] points = getPointsToTry(path.Peek());
+            Point best = points[0];
+            double bestDistance = DistanceToEnd(best);
+            for (int i = 1; i < points.Length; i++)
+            {
+                double distance = DistanceToEnd(points[i]);
+                if (distance < bestDistance)
+                {
+                    bestDistance = distance;
+                    best = points[i];
+                }
+            }
+            return best;
+        }
+
+        public double DistanceToEnd(Point a)
+        {
+            double c = Math.Pow((a.X - b.X), 2) + Math.Pow((a.Y - b.Y), 2);
+            return Math.Sqrt(c);
+        }
     }
 }
