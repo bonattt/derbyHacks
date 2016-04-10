@@ -17,7 +17,7 @@ namespace Game.AlarmStates
 
         public override AlarmState PlayerSpottedElseWhere(Point p)
         {
-            return new Hostile(p, false);
+            return new Hostile(p);
         }
     }
 }
