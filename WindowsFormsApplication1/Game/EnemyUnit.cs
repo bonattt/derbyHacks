@@ -18,16 +18,15 @@ namespace Game
         public AlarmState state;
         private int orientation;
 
-
         public EnemyUnit(AlarmState state)
         {
             this.state = state;
-            orientation = DOWN;
+            orientation = RIGHT;
         }
         public override void DrawAt(Graphics g, Point p)
         {
             base.DrawAt(g, p);
-            drawOrientation(g, p);
+            drawOrientationArrow(g, p);
             DrawMovementLine(g, p);
             state.DrawAt(g, p);
         }
@@ -38,24 +37,24 @@ namespace Game
             state = state.SpotPlayerAt(p);
         }
 
-        private void drawOrientation(Graphics g, Point p)
+        private void drawOrientationArrow(Graphics g, Point p)
         {
             Point[] points;
             if (orientation == UP)
             {
-                points = new Point[] {new Point(p.X-10, p.Y+10), new Point(p.X+10, p.Y+10), new Point(p.X, p.Y-10)};
+                points = new Point[] {new Point(p.X+15, p.Y+35), new Point(p.X+35, p.Y+35), new Point(p.X+25, p.Y+15)};
             }
             else if (orientation == LEFT)
             {
-                points = new Point[] {new Point(p.X-10, p.Y-10), new Point(p.X-10, p.Y+10), new Point(p.X+10, p.Y)};
+                points = new Point[] {new Point(p.X+15, p.Y+15), new Point(p.X+15, p.Y+35), new Point(p.X+35, p.Y+25)};
             }
             else if (orientation == DOWN)
             {
-                points = new Point[] { new Point(p.X - 10, p.Y - 10), new Point(p.X + 10, p.Y - 10), new Point(p.X, p.Y + 10) };
+                points = new Point[] { new Point(p.X+15, p.Y+15), new Point(p.X+35, p.Y+15), new Point(p.X+25, p.Y+35) };
             }
             else if (orientation == RIGHT)
             {
-                points = new Point[] { new Point(p.X + 10, p.Y - 10), new Point(p.X + 10, p.Y + 10), new Point(p.X - 10, p.Y) };
+                points = new Point[] { new Point(p.X+35, p.Y+15), new Point(p.X+35, p.Y+35), new Point(p.X+15, p.Y+25) };
             } 
             else
             {
@@ -167,8 +166,5 @@ namespace Game
             }
             else { throw new Exception("Enemy unit called Move without moving"); }
         }
-
-
-
     }
 }
